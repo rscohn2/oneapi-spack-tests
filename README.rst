@@ -1,4 +1,4 @@
-.. SPDX-FileCopyrightText: 2020 Intel Corporation
+.. SPDX-FileCopyrightText: 2020-2026 Intel Corporation
 ..
 .. SPDX-License-Identifier: MIT
 
@@ -36,8 +36,11 @@ Setup tests::
   # Install and activate spack
   git clone https://github.com/spack/spack.git
   source spack/share/spack/setup-env.sh
+  # Optionally use a local clone of the builtin packages
+  # (https://github.com/spack/spack-packages)
+  spack repo set --destination /path/to/local/spack-packages builtin
   # Add the test packages
-  spack repo add ./repo
+  spack repo add ./repo/spack_repo/oneapi_test
   # Install and activate compilers
   spack install intel-oneapi-compilers
   spack compiler add `spack location -i intel-oneapi-compilers`/compiler/latest/linux/bin/intel64

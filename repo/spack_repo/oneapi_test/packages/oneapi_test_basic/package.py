@@ -5,7 +5,8 @@
 
 # flake8: noqa
 
-from spack import *
+from spack.package import *
+from spack_repo.builtin.build_systems.generic import Package
 
 
 class OneapiTestBasic(Package):
