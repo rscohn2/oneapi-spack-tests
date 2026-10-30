@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2019-2020 Intel Corporation
+# SPDX-FileCopyrightText: 2019-2026 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
 
@@ -11,6 +11,8 @@ on:
 env:
   SPACK_REPO: spack/spack
   SPACK_BRANCH: develop
+  SPACK_PKGS_REPO: lukaszstolarczuk/spack-packages
+  SPACK_PKGS_BRANCH: intel-oneapi-2026.2.0-plus
 
 jobs:
   checks:
@@ -52,9 +54,16 @@ jobs:
         repository: ${{ env.SPACK_REPO }}
         path: spack
         ref: ${{ env.SPACK_BRANCH }}
+    - name: Install spack packages
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ env.SPACK_PKGS_REPO }}
+        path: spack-packages
+        ref: ${{ env.SPACK_PKGS_BRANCH }}
     - name: Package tests
       run: |
         source spack/share/spack/setup-env.sh
+        spack repo set --destination "${GITHUB_WORKSPACE}/spack-packages" builtin
         spack repo add ./repo
         pytest -s tests/test_packages.py::test_${{ matrix.part }}
     - name: Load test
@@ -98,9 +107,16 @@ jobs:
         repository: ${{ env.SPACK_REPO }}
         path: spack
         ref: ${{ env.SPACK_BRANCH }}
+    - name: Install spack packages
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ env.SPACK_PKGS_REPO }}
+        path: spack-packages
+        ref: ${{ env.SPACK_PKGS_BRANCH }}
     - name: Package tests
       run: |
         source spack/share/spack/setup-env.sh
+        spack repo set --destination "${GITHUB_WORKSPACE}/spack-packages" builtin
         spack repo add ./repo
         spack install intel-oneapi-compilers
         spack clean --downloads
