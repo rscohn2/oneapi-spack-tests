@@ -85,13 +85,16 @@ class OneapiTestBasic(Package):
         targets = []
         for c in OneapiTestBasic.samples:
             if '+all' in self.spec or f'+{c}' in self.spec:
-                if c == 'mpi':
-                    targets.append(
-                        f'MPI_PREFIX={self.spec["mpi"].prefix}/mpi/latest'
-                    )
                 if c in ['scalapack', 'mkl', 'mpi']:
+                    dependency = (
+                        c if '+virtual' in spec else f'intel-oneapi-{c}'
+                    )
+                    if c == 'mpi':
+                        targets.append(
+                            f'MPI_PREFIX={spec[dependency].prefix}/mpi/latest'
+                        )
                     targets.append(
-                        f'{c.upper()}_LD_FLAGS={self.spec[c].libs.ld_flags}'
+                        f'{c.upper()}_LD_FLAGS={spec[dependency].libs.ld_flags}'
                     )
                 targets.append(f'{c}-sample.out')
         make(

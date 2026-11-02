@@ -50,6 +50,10 @@ Run all tests::
 
   pytest -s tests
 
+Run recipe unit tests without installing oneAPI packages::
+
+  spack python -m pytest -q tests/test_recipe_dependencies.py
+
 Run pre-commit checks::
 
   pre-commit run --all
