@@ -19,6 +19,9 @@ class OneapiTestBasic(Package):
     maintainers = ["rscohn2"]
 
     depends_on('gmake', type='build')
+    depends_on('cxx', type='build')
+    depends_on('fortran', when='+fortran', type='build')
+    depends_on('fortran', when='+all', type='build')
 
     variant(
         'external-libfabric',
