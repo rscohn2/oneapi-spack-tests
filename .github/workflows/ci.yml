@@ -38,6 +38,24 @@ jobs:
     - name: Checks
       run: |
         pre-commit run --all
+    - name: Install spack
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: ${{ env.SPACK_REPO }}
+        path: spack
+        ref: ${{ env.SPACK_BRANCH }}
+    - name: Install spack packages
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: ${{ env.SPACK_PKGS_REPO }}
+        path: spack-packages
+        ref: ${{ env.SPACK_PKGS_BRANCH }}
+    - name: Recipe unit tests
+      run: |
+        source spack/share/spack/setup-env.sh
+        spack repo set --destination "${GITHUB_WORKSPACE}/spack-packages" builtin
+        spack repo add ./repo/spack_repo/oneapi_test
+        spack python -m pytest -q tests/test_recipe_dependencies.py
 
   gcc:
     runs-on: ubuntu-26.04
@@ -74,7 +92,6 @@ jobs:
         source spack/share/spack/setup-env.sh
         spack repo set --destination "${GITHUB_WORKSPACE}/spack-packages" builtin
         spack repo add ./repo/spack_repo/oneapi_test
-        spack python -m pytest -q tests/test_recipe_dependencies.py
         pytest -s tests/test_packages.py::test_${{ matrix.part }}
     - name: Load test
       run: |
@@ -128,7 +145,6 @@ jobs:
         source spack/share/spack/setup-env.sh
         spack repo set --destination "${GITHUB_WORKSPACE}/spack-packages" builtin
         spack repo add ./repo/spack_repo/oneapi_test
-        spack python -m pytest -q tests/test_recipe_dependencies.py
         spack install intel-oneapi-compilers
         spack clean --downloads
         spack compiler add `spack location -i intel-oneapi-compilers`/compiler/latest/bin
