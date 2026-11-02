@@ -17,6 +17,8 @@ class OneapiTestVirtual(Package):
 
     maintainers = ["rscohn2"]
 
+    depends_on("gmake", type="build")
+
     variant(
         'sycl',
         default=True,

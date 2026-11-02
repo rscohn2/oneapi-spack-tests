@@ -18,6 +18,8 @@ class OneapiTestBasic(Package):
 
     maintainers = ["rscohn2"]
 
+    depends_on('gmake', type='build')
+
     variant(
         'external-libfabric',
         default=False,
