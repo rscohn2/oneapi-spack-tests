@@ -16,7 +16,7 @@ class OneapiTestBasic(Package):
     git = "https://github.com/rscohn2/oneapi-spack-tests.git"
     version('main', branch='main')
 
-    maintainers = ["rscohn2"]
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     depends_on('gmake', type='build')
     depends_on('cxx', type='build')
