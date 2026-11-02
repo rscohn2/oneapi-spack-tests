@@ -38,6 +38,7 @@ def test_icx_sample_variant_scope(monkeypatch, test_function, sample):
     [
         ('mkl', False),
         ('mpi', False),
+        ('scalapack', False),
         ('mkl', True),
         ('mpi', True),
         ('scalapack', True),
@@ -53,8 +54,9 @@ def test_install_dependency_lookup(monkeypatch, component, virtual):
             f'oneapi-test-basic +{component} '
             + ('+virtual' if virtual else '~virtual')
         )
-        name = component if virtual else f'intel-oneapi-{component}'
+        # scalapack is provided by MKL +cluster
         provider = 'mkl' if component == 'scalapack' else component
+        name = component if virtual else f'intel-oneapi-{provider}'
         dependency = spack_spec.Spec(f'intel-oneapi-{provider}')
         spec.add_dependency_edge(
             dependency,

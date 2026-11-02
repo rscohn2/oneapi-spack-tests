@@ -73,6 +73,12 @@ class OneapiTestBasic(Package):
     depends_on(
         f'intel-oneapi-mkl +ilp64', when='+mkl -virtual +ilp64', type='link'
     )
+    # scalapack has no dedicated intel-oneapi package; it is provided
+    # by MKL when built with cluster support
+    depends_on(
+        'intel-oneapi-mkl +cluster', when='+scalapack -virtual', type='link'
+    )
+    depends_on('intel-oneapi-mkl +cluster', when='+all -virtual', type='link')
 
     depends_on('tbb', when='+tbb +virtual', type='link')
     depends_on('mkl', when='+mkl +virtual', type='link')
@@ -86,9 +92,12 @@ class OneapiTestBasic(Package):
         for c in OneapiTestBasic.samples:
             if '+all' in self.spec or f'+{c}' in self.spec:
                 if c in ['scalapack', 'mkl', 'mpi']:
-                    dependency = (
-                        c if '+virtual' in spec else f'intel-oneapi-{c}'
-                    )
+                    if '+virtual' in spec:
+                        dependency = c
+                    else:
+                        # scalapack is provided by MKL +cluster
+                        provider = 'mkl' if c == 'scalapack' else c
+                        dependency = f'intel-oneapi-{provider}'
                     if c == 'mpi':
                         targets.append(
                             f'MPI_PREFIX={spec[dependency].prefix}/mpi/latest'
