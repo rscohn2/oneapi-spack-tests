@@ -1,6 +1,9 @@
-# SPDX-FileCopyrightText: 2020 Intel Corporation
+# SPDX-FileCopyrightText: 2020-2026 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+
+__pycache__/
+*.py[cod]
 
 /samples/*-sample
 /samples/*-sample.out
