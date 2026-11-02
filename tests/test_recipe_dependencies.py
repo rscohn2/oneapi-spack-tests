@@ -6,10 +6,31 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import test_packages
 
 spack_repo = pytest.importorskip('spack.repo')
 spack_spec = pytest.importorskip('spack.spec')
 spack_deptypes = pytest.importorskip('spack.deptypes')
+
+
+@pytest.mark.parametrize(
+    'test_function,sample',
+    [
+        (getattr(test_packages, f'test_icx_{group}'), sample)
+        for group in (1, 2, 3)
+        for sample in getattr(test_packages, f'icx{group}_samples')
+    ],
+)
+def test_icx_sample_variant_scope(monkeypatch, test_function, sample):
+    requests = []
+    monkeypatch.setattr(test_packages, 'spack_install', requests.append)
+    test_function(clean=None, sample=sample)
+    assert len(requests) == 1
+    spec = spack_spec.Spec(requests[0])
+    assert spec.name == 'oneapi-test-basic'
+    assert f'+{sample}' in spec
+    compiler = spec['intel-oneapi-compilers']
+    assert not compiler.variants
 
 
 @pytest.mark.parametrize(
