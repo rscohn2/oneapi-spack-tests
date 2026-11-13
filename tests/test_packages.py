@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2020 Intel Corporation
+# SPDX-FileCopyrightText: 2020-2026 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
 
@@ -52,17 +52,17 @@ icx3_samples = [
 
 @pytest.mark.parametrize('sample', icx1_samples)
 def test_icx_1(clean, sample):
-    spack_install(f'oneapi-test-basic%oneapi +{sample}')
+    spack_install(f'oneapi-test-basic +{sample} %oneapi')
 
 
 @pytest.mark.parametrize('sample', icx2_samples)
 def test_icx_2(clean, sample):
-    spack_install(f'oneapi-test-basic%oneapi +{sample}')
+    spack_install(f'oneapi-test-basic +{sample} %oneapi')
 
 
 @pytest.mark.parametrize('sample', icx3_samples)
 def test_icx_3(clean, sample):
-    spack_install(f'oneapi-test-basic%oneapi +{sample}')
+    spack_install(f'oneapi-test-basic +{sample} %oneapi')
 
 
 def test_external_libfabric(clean):

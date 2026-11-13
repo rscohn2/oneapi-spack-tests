@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2020-2026 Intel Corporation
+#
+# SPDX-License-Identifier: MIT
+
+repo:
+  namespace: 'oneapi_test'
+  api: v2.0

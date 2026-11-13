@@ -5,7 +5,8 @@
 
 # flake8: noqa
 
-from spack import *
+from spack.package import *
+from spack_repo.builtin.build_systems.generic import Package
 
 
 class OneapiTestVirtual(Package):
@@ -14,7 +15,11 @@ class OneapiTestVirtual(Package):
     homepage = "https://github.com/rscohn2/oneapi-spack-tests"
     url = "https://github.com/rscohn2/oneapi-spack-tests/tarball/main"
 
-    maintainers = ["rscohn2"]
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
+
+    depends_on("gmake", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     variant(
         'sycl',

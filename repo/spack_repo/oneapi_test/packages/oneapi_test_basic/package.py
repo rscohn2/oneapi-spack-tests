@@ -5,7 +5,8 @@
 
 # flake8: noqa
 
-from spack import *
+from spack.package import *
+from spack_repo.builtin.build_systems.generic import Package
 
 
 class OneapiTestBasic(Package):
@@ -15,7 +16,12 @@ class OneapiTestBasic(Package):
     git = "https://github.com/rscohn2/oneapi-spack-tests.git"
     version('main', branch='main')
 
-    maintainers = ["rscohn2"]
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
+
+    depends_on('gmake', type='build')
+    depends_on('cxx', type='build')
+    depends_on('fortran', when='+fortran', type='build')
+    depends_on('fortran', when='+all', type='build')
 
     variant(
         'external-libfabric',
@@ -67,6 +73,12 @@ class OneapiTestBasic(Package):
     depends_on(
         f'intel-oneapi-mkl +ilp64', when='+mkl -virtual +ilp64', type='link'
     )
+    # scalapack has no dedicated intel-oneapi package; it is provided
+    # by MKL when built with cluster support
+    depends_on(
+        'intel-oneapi-mkl +cluster', when='+scalapack -virtual', type='link'
+    )
+    depends_on('intel-oneapi-mkl +cluster', when='+all -virtual', type='link')
 
     depends_on('tbb', when='+tbb +virtual', type='link')
     depends_on('mkl', when='+mkl +virtual', type='link')
@@ -79,13 +91,19 @@ class OneapiTestBasic(Package):
         targets = []
         for c in OneapiTestBasic.samples:
             if '+all' in self.spec or f'+{c}' in self.spec:
-                if c == 'mpi':
-                    targets.append(
-                        f'MPI_PREFIX={self.spec["mpi"].prefix}/mpi/latest'
-                    )
                 if c in ['scalapack', 'mkl', 'mpi']:
+                    if '+virtual' in spec:
+                        dependency = c
+                    else:
+                        # scalapack is provided by MKL +cluster
+                        provider = 'mkl' if c == 'scalapack' else c
+                        dependency = f'intel-oneapi-{provider}'
+                    if c == 'mpi':
+                        targets.append(
+                            f'MPI_PREFIX={spec[dependency].prefix}/mpi/latest'
+                        )
                     targets.append(
-                        f'{c.upper()}_LD_FLAGS={self.spec[c].libs.ld_flags}'
+                        f'{c.upper()}_LD_FLAGS={spec[dependency].libs.ld_flags}'
                     )
                 targets.append(f'{c}-sample.out')
         make(
